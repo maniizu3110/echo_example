@@ -5,6 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"time"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -21,23 +24,41 @@ type Cat struct {
 
 func main() {
 	e := echo.New()
+	e.Use(ServerHeader)
+	adminGroup := e.Group("/admin")
+	cookieGroup := e.Group("/cookie")
 
-	g := e.Group("/admin")
-	//logger create auto log
-	g.Use(middleware.Logger())
+	//正しいcookieを持っていれば/cookie/mainにアクセスできるが、持っていない時はcheckCookie内のunauthorizedが返される
+	cookieGroup.Use(checkCookie)
 
-	g.GET("/main",mainAdmin)
+	// g.Use(middleware.Logger()) create auto log
+	adminGroup.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: `[${time_rfc3339}] ${status} ${method} ${host}${latency_human}` + "\n",
+	}))
+	adminGroup.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
+		if username == "leo" && password == "1234" {
+			return true, nil
+		}
+		return false, nil
+	}))
+
+	adminGroup.GET("/main", mainAdmin)
+	cookieGroup.GET("/main", mainCookie)
 	e.GET("/", yallo)
-	e.POST("user/add", addUser)
-	e.POST("dog/add", addDog)
-	e.POST("cat/add", addCat)
+	e.POST("/user/add", addUser)
+	e.GET("/login", login)
+	e.POST("/dog/add", addDog)
+	e.POST("/cat/add", addCat)
 	e.GET("/user/:data", getQuery)
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
 //grouping path
-func mainAdmin(c echo.Context)error{
-	return c.String(http.StatusOK,"you are on the secret admin main page")
+func mainCookie(c echo.Context) error {
+	return c.String(http.StatusOK, "you are on the secret cookie main page")
+}
+func mainAdmin(c echo.Context) error {
+	return c.String(http.StatusOK, "you are on the secret admin main page")
 }
 
 func yallo(c echo.Context) error {
@@ -61,7 +82,7 @@ func getQuery(c echo.Context) error {
 	return c.JSON(http.StatusBadRequest, map[string]string{"error": "internal server error"})
 }
 
-//Native go1
+//Native go1(high paformance)
 func addUser(c echo.Context) error {
 	user := User{}
 	defer c.Request().Body.Close()
@@ -80,7 +101,7 @@ func addUser(c echo.Context) error {
 
 }
 
-//Native go2
+//Native go2(high peformance)
 func addDog(c echo.Context) error {
 	dog := Dog{}
 
@@ -94,7 +115,7 @@ func addDog(c echo.Context) error {
 	return c.String(http.StatusOK, "we got your dog")
 }
 
-//Using Echo
+//Using Echo(easy way)
 func addCat(c echo.Context) error {
 	cat := Cat{}
 	err := c.Bind(&cat)
@@ -105,3 +126,52 @@ func addCat(c echo.Context) error {
 	log.Printf("this is your cat:%#v", cat)
 	return c.String(http.StatusOK, "we get your cat")
 }
+
+//sqlに接続したと仮定してcookieを設定している
+func login(c echo.Context) error {
+	username := c.QueryParam("username")
+	password := c.QueryParam("password")
+	//check username and password against DB after hashing the password
+	if username == "leo" && password == "1234" {
+		cookie := &http.Cookie{}
+		cookie.Name = "sessionID"
+		cookie.Value = "some_string"
+		cookie.Expires = time.Now().Add(48 * time.Hour)
+
+		c.SetCookie(cookie)
+		return c.String(http.StatusOK, "you were logged in")
+
+	}
+	return c.String(http.StatusUnauthorized, "your info was wrong")
+}
+
+/////////////////////////middlewares/////////////////////////////////
+//creating custom header
+func ServerHeader(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Set(echo.HeaderServer, "BlueBot/1.0")
+		c.Response().Header().Set("notrallyHeader", "test")
+		return next(c)
+
+	}
+}
+
+func checkCookie(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cookie, err := c.Cookie("sessionID")
+		if err != nil {
+			if strings.Contains(err.Error(),"named cookie not present"){
+				return c.String(http.StatusUnauthorized,"you don't have any cookie")
+			}
+			log.Println(err)
+			return err
+		}
+		//もし他に（セッションとか）認証情報があれば、承認するのでここに処理を入れることも多い
+		if  cookie.Value == "some_string"{
+			return next(c)
+		}
+		return c.String(http.StatusUnauthorized,"you don't have right cookie")
+
+	}
+}
+
