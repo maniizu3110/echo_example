@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type User struct {
@@ -21,12 +21,23 @@ type Cat struct {
 
 func main() {
 	e := echo.New()
+
+	g := e.Group("/admin")
+	//logger create auto log
+	g.Use(middleware.Logger())
+
+	g.GET("/main",mainAdmin)
 	e.GET("/", yallo)
 	e.POST("user/add", addUser)
 	e.POST("dog/add", addDog)
 	e.POST("cat/add", addCat)
 	e.GET("/user/:data", getQuery)
 	e.Logger.Fatal(e.Start(":8080"))
+}
+
+//grouping path
+func mainAdmin(c echo.Context)error{
+	return c.String(http.StatusOK,"you are on the secret admin main page")
 }
 
 func yallo(c echo.Context) error {
