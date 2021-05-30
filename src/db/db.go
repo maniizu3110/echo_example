@@ -10,11 +10,11 @@ import (
 
 var db *gorm.DB
 
-type Config struct {
-	Database DbConfig
+type config struct {
+	Database dbConfig
 }
 
-type DbConfig struct {
+type dbConfig struct {
 	Driver    string
 	Server    string
 	User      string
@@ -24,6 +24,7 @@ type DbConfig struct {
 	ParseTime string
 }
 
+//InitDB start MysqlDB
 func InitDB() {
 	var err error
 	config := getConfig()
@@ -34,8 +35,8 @@ func InitDB() {
 	db.AutoMigrate(&models.Dog{})
 }
 
-func getConfig() Config {
-	var config Config
+func getConfig() config {
+	var config config
 	_, err := toml.DecodeFile("config.local.toml", &config)
 	if err != nil {
 		fmt.Println(err)
@@ -43,10 +44,10 @@ func getConfig() Config {
 	}
 	return config
 }
-func (d DbConfig) DSN() string {
+func (d dbConfig) DSN() string {
 	return fmt.Sprintf("%s:%s@%s/%s?charset=%s&parseTime=%s", d.User, d.Password, d.Server, d.Database, d.Charset, d.ParseTime)
 }
 
-func (c Config) Db() (string, string) {
+func (c config) Db() (string, string) {
 	return c.Database.Driver, c.Database.DSN()
 }
