@@ -1,18 +1,15 @@
 package handlers
 
 import (
-	"github.com/labstack/echo/v4"
 	"log"
+	"myapp/src/api/models"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
-type Hamster struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
 func AddHamster(c echo.Context) error {
-	hamster := Hamster{}
+	hamster := models.Hamster{}
 
 	err := c.Bind(&hamster)
 	if err != nil {

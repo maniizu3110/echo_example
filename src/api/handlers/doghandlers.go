@@ -1,29 +1,27 @@
 package handlers
 
 import (
-	"encoding/json"
-	"log"
+	"myapp/src/api/models"
+	"myapp/src/db"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Dog struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
+//AddDog decode and create dog
 func AddDog(c echo.Context) error {
-	dog := Dog{}
 
-	defer c.Request().Body.Close()
+	db := db.OpenDB()
 
-	err := json.NewDecoder(c.Request().Body).Decode(&dog)
-	if err != nil {
-		log.Printf("Failed processing addDog request: %s\n", err)
-		return echo.NewHTTPError(http.StatusInternalServerError)
+	defer db.Close()
+
+	dog := new(models.Dog)
+
+	if err := c.Bind(dog); err != nil{
+		return err
 	}
 
-	log.Printf("this is your dog: %#v", dog)
+	db.Create(&dog)
+
 	return c.String(http.StatusOK, "we got your dog!")
 }

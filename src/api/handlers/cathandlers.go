@@ -5,16 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"myapp/src/api/models"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Cat struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
+//GetCats get all cats
 func GetCats(c echo.Context) error {
 	catName := c.QueryParam("name")
 	catType := c.QueryParam("type")
@@ -38,7 +35,7 @@ func GetCats(c echo.Context) error {
 }
 
 func AddCat(c echo.Context) error {
-	cat := Cat{}
+	cat := models.Cat{}
 
 	defer c.Request().Body.Close()
 
