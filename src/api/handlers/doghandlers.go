@@ -20,6 +20,9 @@ func AddDog(c echo.Context) error {
 	if err := c.Bind(dog); err != nil{
 		return err
 	}
+	//この操作まとめたい
+	db.AutoMigrate(&models.Dog{})
+
 
 	db.Create(&dog)
 

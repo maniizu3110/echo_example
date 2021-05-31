@@ -6,5 +6,5 @@ import (
 )
 
 func CookieGroup(g *echo.Group) {
-	g.GET("/main", handlers.MainCookie)
+	g.GET("/main", handlers.CreateUser)
 }

@@ -8,5 +8,5 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.3.0
-	gorm.io/gorm v1.21.10 // indirect　//jinzhu/gormを呼び出して欲しいのでコメントアウト
+	// gorm.io/gorm v1.21.10 // indirect　//jinzhu/gormを呼び出して欲しいのでコメントアウト
 )

@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"myapp/src/api/models"
 
 	"github.com/BurntSushi/toml"
 	"github.com/jinzhu/gorm"
@@ -34,8 +33,6 @@ func InitDB() {
 	if err != nil {
 		panic(err.Error())
 	}
-	//TODO:存在しているものはここでmigrateする
-	db.AutoMigrate(&models.Dog{})
 }
 
 func getConfig() config {
