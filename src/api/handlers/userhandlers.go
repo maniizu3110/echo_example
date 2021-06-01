@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"myapp/src/api/firebase/snippets"
 	"myapp/src/api/models"
 	"myapp/src/db"
 	"net/http"
@@ -8,8 +9,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//CreateDog decode and create dog
 func CreateUser(c echo.Context) error {
+	err := snippets.AdminUser(c)
+	if err != nil {
+		return err
+	}
 
 	db := db.OpenDB()
 
@@ -17,7 +21,7 @@ func CreateUser(c echo.Context) error {
 
 	user := new(models.User)
 
-	if err := c.Bind(user); err != nil{
+	if err := c.Bind(user); err != nil {
 		return err
 	}
 	//この操作まとめたい

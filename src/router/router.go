@@ -12,8 +12,6 @@ func New() *echo.Echo {
 
 	// create groups
 	//api/v1をグループ化しておきたい
-	userGroup := e.Group("/user")
-
 	adminGroup := e.Group("/admin")
 	cookieGroup := e.Group("/cookie")
 	jwtGroup := e.Group("/jwt")
@@ -28,7 +26,6 @@ func New() *echo.Echo {
 	api.MainGroup(e)
 	// set group routes
 	api.AdminGroup(adminGroup)
-	api.UserGroup(userGroup)
 	api.CookieGroup(cookieGroup)
 	//jwt認証がないと通れないということは全てのurlがこれを通るということ
 	api.JwtGroup(jwtGroup)

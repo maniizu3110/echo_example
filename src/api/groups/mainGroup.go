@@ -6,8 +6,8 @@ import (
 )
 
 func MainGroup(e *echo.Echo) {
-	e.GET("/tokenUser", handlers.Token)
 	e.GET("/login", handlers.Login)
+	e.POST("/user", handlers.CreateUser)
 	e.GET("/cats/:data", handlers.GetCats)
 	e.POST("/cats", handlers.AddCat)
 	e.POST("/dogs", handlers.AddDog)
