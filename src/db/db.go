@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"myapp/src/api/models"
 
 	"github.com/BurntSushi/toml"
 	"github.com/jinzhu/gorm"
@@ -29,10 +28,11 @@ func InitDB() {
 	var err error
 	config := getConfig()
 	db, err = gorm.Open(config.Db())
+	defer db.Close()
+
 	if err != nil {
 		panic(err.Error())
 	}
-	db.AutoMigrate(&models.Dog{})
 }
 
 func getConfig() config {
@@ -50,4 +50,15 @@ func (d dbConfig) DSN() string {
 
 func (c config) Db() (string, string) {
 	return c.Database.Driver, c.Database.DSN()
+}
+
+func OpenDB() *gorm.DB {
+	var err error
+	config := getConfig()
+	db, err = gorm.Open(config.Db())
+	if err != nil {
+        panic("failed to connect database.")
+    }
+	db.LogMode(true)
+	return db
 }
