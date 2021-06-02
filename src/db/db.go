@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"myapp/src/api/models"
 
 	"github.com/BurntSushi/toml"
 	"github.com/jinzhu/gorm"
@@ -23,16 +24,21 @@ type dbConfig struct {
 	ParseTime string
 }
 
-//InitDB start MysqlDB
-func InitDB() {
+func OpenDB() *gorm.DB {
 	var err error
 	config := getConfig()
 	db, err = gorm.Open(config.Db())
-	defer db.Close()
-
 	if err != nil {
-		panic(err.Error())
+		panic("failed to connect database.")
 	}
+	autoAllMigrate(db)
+	db.LogMode(true)
+	return db
+}
+
+func autoAllMigrate(db *gorm.DB) error {
+	db.AutoMigrate(&models.User{})
+	return nil
 }
 
 func getConfig() config {
@@ -50,15 +56,4 @@ func (d dbConfig) DSN() string {
 
 func (c config) Db() (string, string) {
 	return c.Database.Driver, c.Database.DSN()
-}
-
-func OpenDB() *gorm.DB {
-	var err error
-	config := getConfig()
-	db, err = gorm.Open(config.Db())
-	if err != nil {
-        panic("failed to connect database.")
-    }
-	db.LogMode(true)
-	return db
 }

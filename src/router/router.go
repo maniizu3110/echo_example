@@ -5,9 +5,10 @@ import (
 	"myapp/src/api/middlewares"
 
 	"github.com/labstack/echo/v4"
+	"github.com/jinzhu/gorm"
 )
 
-func New() *echo.Echo {
+func New(db *gorm.DB) *echo.Echo {
 	e := echo.New()
 	middlewares.CorsMiddlewares(e)
 
