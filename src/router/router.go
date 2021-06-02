@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+//New start main router
 func New(db *gorm.DB) *echo.Echo {
 	e := echo.New()
 	
