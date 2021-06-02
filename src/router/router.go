@@ -10,6 +10,8 @@ import (
 
 func New(db *gorm.DB) *echo.Echo {
 	e := echo.New()
+	
+	// middlewares.GcpConfig()　本番では必要だが一旦切っておく
 	middlewares.CorsMiddlewares(e)
 
 	g := e.Group("/api/v1")
