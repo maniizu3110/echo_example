@@ -21,12 +21,15 @@ func create(c echo.Context) error {
 	if err := c.Bind(user); err != nil {
 		return err
 	}
+	//ここでエラー出てるっぽい。
+	fmt.Println(c.Get("Tx").(*gorm.DB),"出力して欲しい")
 	db := c.Get("Tx").(*gorm.DB)
 	db.Create(&user)
 
 	return c.String(http.StatusOK, "Registed new user")
 }
 func getAll(c echo.Context) error {
+	//ここ
 	db := c.Get("Tx").(*gorm.DB)
 	result := db.Find(&models.User{})
 	fmt.Println(result)

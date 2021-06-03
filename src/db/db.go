@@ -37,6 +37,7 @@ func OpenDB() *gorm.DB {
 }
 
 func autoAllMigrate(db *gorm.DB) error {
+	//全部のテーブルを記述しておく
 	db.AutoMigrate(&models.User{})
 	return nil
 }

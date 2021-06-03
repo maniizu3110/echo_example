@@ -14,7 +14,7 @@ import (
 //tokenはfirebaseからidToken(jwt)がcookieに登録されている
 
 //CheckAdminMiddlewares 適切なTokenを持っているかチェック
-func CheckAdminMiddlewares(g *echo.Group) {
+func CheckAdminMiddlewares(g *echo.Group){
 	g.Use(checkToken)
 }
 
@@ -31,8 +31,7 @@ func checkToken(next echo.HandlerFunc) echo.HandlerFunc {
 		firebaseApp := initializeAppDefault()
 		token := cookie.Value
 		verifyIDToken(c.Request().Context(), firebaseApp, token)
-		return nil
-
+		return next(c)
 	}
 }
 
@@ -55,6 +54,5 @@ func verifyIDToken(ctx context.Context, app *firebase.App, idToken string) *auth
 		log.Fatalf("error verifying ID token: %v\n", err)
 	}
 
-	log.Printf("Verified ID token: %v\n", token)
 	return token
 }
