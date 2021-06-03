@@ -7,8 +7,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func New() *echo.Echo {
+func Run() *echo.Echo {
 	e := echo.New()
+	e.Start(":8080")
 
 	// create groups
 	//api/v1をグループ化しておきたい

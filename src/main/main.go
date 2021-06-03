@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	// "log"
 	"myapp/src/api/firebase/snippets"
 	"myapp/src/db"
 	"myapp/src/router"
@@ -17,9 +16,8 @@ func init() {
 }
 
 func main() {
-	fmt.Println("Welcome to the webserver")
-	e := router.New()
-	e.Start(":8080")
+	router := router.Run()
+	fmt.Println(router)
 }
 
 
