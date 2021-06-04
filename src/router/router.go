@@ -3,12 +3,13 @@ package router
 import (
 	"myapp/src/api/handlers"
 	"myapp/src/api/middlewares"
-
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 )
 
-func Router() *echo.Echo {
+func Router(database *gorm.DB) *echo.Echo {
 	e := echo.New()
+	middlewares.SetDBMiddleware(database)
 	middlewares.CorsMiddlewares(e)
 	
 	//TODO:

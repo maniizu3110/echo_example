@@ -3,9 +3,9 @@ package handlers
 import (
 	"fmt"
 	"myapp/src/api/models"
+	"myapp/src/db"
 	"net/http"
 
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,22 +17,18 @@ func UserHandler(g *echo.Group){
 
 
 func createHandler(c echo.Context)(err error){
-	fmt.Println("なんとかここまで来て欲しい")
-	// user := new(models.User)
-	// if err := c.Bind(user); err != nil {
-	// 	return err
-	// }
-	// //ここでエラー出てるっぽい。
-	// fmt.Println(c.Get("Tx").(*gorm.DB),"出力して欲しい")
-	// db := c.Get("Tx").(*gorm.DB)
-	// db.Create(&user)
-
+	//TODO:共通化（db2回呼んでいる）
+	db := db.InitDB()
+	user := new(models.User)
+	if err := c.Bind(user); err != nil {
+		return err
+	}
+	db.Create(&user)
 	return c.String(http.StatusOK, "Registed new user")
 }
 
 func getAll(c echo.Context) error {
-	//ここ
-	db := c.Get("Tx").(*gorm.DB)
+	db := db.InitDB()
 	result := db.Find(&models.User{})
 	fmt.Println(result)
 

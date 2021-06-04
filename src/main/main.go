@@ -15,7 +15,7 @@ func main() {
 	database = db.InitDB()
 	defer database.Close()
 	
-	route := router.Router()
+	route := router.Router(database)
 	route.Logger.Fatal(route.Start(":8080"))
 }
 
