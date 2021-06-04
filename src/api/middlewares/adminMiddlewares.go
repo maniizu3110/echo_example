@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -11,10 +12,12 @@ import (
 	"github.com/labstack/echo/v4"
 	//hello
 )
+
 //tokenはfirebaseからidToken(jwt)がcookieに登録されている
 
 //CheckAdminMiddlewares 適切なTokenを持っているかチェック
 func CheckAdminMiddlewares(g *echo.Group){
+	g = g.Group("")
 	g.Use(checkToken)
 }
 
@@ -31,6 +34,7 @@ func checkToken(next echo.HandlerFunc) echo.HandlerFunc {
 		firebaseApp := initializeAppDefault()
 		token := cookie.Value
 		verifyIDToken(c.Request().Context(), firebaseApp, token)
+		fmt.Println("認証通ったよ")
 		return next(c)
 	}
 }

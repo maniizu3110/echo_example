@@ -14,7 +14,8 @@ func main() {
 	var database *gorm.DB
 	database = db.InitDB()
 	defer database.Close()
-	route := router.Run()
+	
+	route := router.Router()
 	route.Logger.Fatal(route.Start(":8080"))
 }
 

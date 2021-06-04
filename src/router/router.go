@@ -1,21 +1,22 @@
 package router
 
 import (
-	api "myapp/src/api/groups"
+	"myapp/src/api/handlers"
 	"myapp/src/api/middlewares"
 
 	"github.com/labstack/echo/v4"
 )
 
-func Run() *echo.Echo {
+func Router() *echo.Echo {
 	e := echo.New()
-
+	middlewares.CorsMiddlewares(e)
+	
+	//TODO:
 	g := e.Group("/api/v1")
-
-	middlewares.CorsMiddlewares(e) //何もしてないやつ（グループの練習）
 	middlewares.CheckAdminMiddlewares(g)
 
-	api.MainGroup(e)
+
+	handlers.UserHandler(g.Group("/user"))
 
 	return e
 }

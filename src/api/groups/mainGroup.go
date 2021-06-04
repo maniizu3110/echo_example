@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MainGroup(e *echo.Echo) {
-	e.POST("/user", handlers.CreateUser)
+func MainGroup(g *echo.Group) {
+	g.Group("")
+	g.POST("/user", handlers.CreateUser)
 }

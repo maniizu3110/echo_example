@@ -2,6 +2,7 @@ package handlers
 
 import (
 	// "myapp/src/api/firebase/snippets"
+	"fmt"
 	"myapp/src/api/models"
 	"myapp/src/db"
 	"net/http"
@@ -10,11 +11,7 @@ import (
 )
 
 func CreateUser(c echo.Context) error {
-	// err := snippets.AdminUser(c)
-	// if err != nil {
-	// 	return err
-	// }
-	//DBに関する操作はGet,Setで行う
+	fmt.Println("ログ表示されないんかな")
 	db := db.InitDB()
 
 	defer db.Close()
