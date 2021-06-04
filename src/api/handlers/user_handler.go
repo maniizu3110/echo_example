@@ -15,6 +15,7 @@ func UserHandler(g *echo.Group) {
 	g.POST("", createHandler)
 	g.GET("", getAll)
 	g.GET("/:id", get)
+	g.PUT("/:id", update)
 }
 
 func createHandler(c echo.Context) (err error) {
@@ -29,9 +30,9 @@ func createHandler(c echo.Context) (err error) {
 }
 
 func getAll(c echo.Context) error {
-	db := db.InitDB()
-	result := db.Find(&models.User{})
-	fmt.Println(result)
+	// db := db.InitDB()
+	// result := db.Find(&models.User{})
+	// fmt.Println(result)
 
 	return c.String(http.StatusOK, "get Users")
 }
@@ -43,8 +44,17 @@ func get(c echo.Context) (err error ){
 	if err != nil {
 		return err
 	}
-	result := db.Where("id = ?",id).First(data)
-	fmt.Println(result)
+	db.Where("id = ?",id).First(data)
 
 	return c.JSON(http.StatusOK,data)
+}
+
+func update(c echo.Context)(err error){
+	db:=db.InitDB()
+	newData := c.QueryParams()
+	fmt.Println(newData)
+	originData:= &models.User{}
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	db.Where("id = ?",id).First(originData)
+	return c.JSON(http.StatusOK,newData)
 }
