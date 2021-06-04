@@ -10,6 +10,6 @@ func MainGroup(e *echo.Echo) {
 	e.POST("/user", handlers.CreateUser)
 	e.GET("/cats/:data", handlers.GetCats)
 	e.POST("/cats", handlers.AddCat)
-	e.POST("/dogs", handlers.AddDog)
+	// e.POST("/dogs", handlers.AddDog)
 	e.POST("/hamsters", handlers.AddHamster)
 }

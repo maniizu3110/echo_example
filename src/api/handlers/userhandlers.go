@@ -14,8 +14,8 @@ func CreateUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-
-	db := db.OpenDB()
+	//DBに関する操作はGet,Setで行う
+	db := db.InitDB()
 
 	defer db.Close()
 

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	api "myapp/src/api/groups"
 	"myapp/src/api/middlewares"
 
@@ -8,8 +9,8 @@ import (
 )
 
 func Run() *echo.Echo {
+	fmt.Print()
 	e := echo.New()
-	e.Start(":8080")
 
 	// create groups
 	//api/v1をグループ化しておきたい

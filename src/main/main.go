@@ -1,23 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"myapp/src/api/firebase/snippets"
 	"myapp/src/db"
 	"myapp/src/router"
+	"github.com/jinzhu/gorm"
+
+	
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func init() {
-	db.InitDB()
 	snippets.InitializeAppDefault()
 	
 }
 
 func main() {
-	router := router.Run()
-	fmt.Println(router)
+	var database *gorm.DB
+	database = db.InitDB()
+	defer database.Close()
+	route := router.Run()
+	route.Logger.Fatal(route.Start(":8080"))
 }
 
 
