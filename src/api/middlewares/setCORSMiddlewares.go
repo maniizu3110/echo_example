@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func SetMainMiddlewares(e *echo.Echo) {
+func CorsMiddlewares(e *echo.Echo) {
 	//cors対策
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"http://localhost:3000", "https://next-redux-app-tau.vercel.app/"},

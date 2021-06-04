@@ -1,7 +1,6 @@
 package main
 
 import (
-	"myapp/src/api/firebase/snippets"
 	"myapp/src/db"
 	"myapp/src/router"
 	"github.com/jinzhu/gorm"
@@ -10,11 +9,6 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
-
-func init() {
-	snippets.InitializeAppDefault()
-	
-}
 
 func main() {
 	var database *gorm.DB
