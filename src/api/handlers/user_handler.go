@@ -32,11 +32,12 @@ func createHandler(c echo.Context) (err error) {
 }
 
 func getAll(c echo.Context) error {
-	// db := db.InitDB()
-	// result := db.Find(&models.User{})
-	// fmt.Println(result)
+	var users []models.User
+	db := db.InitDB()
+	result := db.Find(&users)
+	fmt.Println(result)
 
-	return c.String(http.StatusOK, "get Users")
+	return c.JSON(http.StatusOK, result)
 }
 
 func get(c echo.Context) (err error) {
