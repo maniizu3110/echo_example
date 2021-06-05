@@ -6,6 +6,7 @@ import (
 	"myapp/src/db"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -37,24 +38,42 @@ func getAll(c echo.Context) error {
 	return c.String(http.StatusOK, "get Users")
 }
 
-func get(c echo.Context) (err error ){
+func get(c echo.Context) (err error) {
 	db := db.InitDB()
-	data:= &models.User{}
+	data := &models.User{}
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return err
 	}
-	db.Where("id = ?",id).First(data)
+	db.Where("id = ?", id).First(data)
 
-	return c.JSON(http.StatusOK,data)
+	return c.JSON(http.StatusOK, data)
 }
 
-func update(c echo.Context)(err error){
-	db:=db.InitDB()
-	newData := c.QueryParams()
-	fmt.Println(newData)
-	originData:= &models.User{}
+func update(c echo.Context) (err error) {
+	db := db.InitDB()
+	newData := models.User{}
+	err = c.Bind(&newData)
+	originData := &models.User{}
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
-	db.Where("id = ?",id).First(originData)
-	return c.JSON(http.StatusOK,newData)
+	db.Where("id = ?", id).First(originData)
+	fmt.Println("このログ出力したい", newData.ID)
+	if newData.ID != 0 && newData.ID != originData.ID {
+		return c.JSON(http.StatusConflict, "urlに含まれるIDと編集データIDが一致していません")
+	}
+	if (newData.CreatedAt != time.Time{}) && (newData.CreatedAt != originData.CreatedAt) {
+		return c.JSON(http.StatusConflict, "作成時間の編集はできません")
+	}
+	if (newData.UpdatedAt != time.Time{}) && (newData.UpdatedAt != originData.UpdatedAt) {
+		return c.JSON(http.StatusConflict, "更新時間の編集はできません")
+	}
+	if newData.Name != originData.Name {
+		originData.Name = newData.Name
+	}
+	if newData.Email != originData.Email {
+		originData.Email = newData.Email
+	}
+	db.Save(&originData)
+
+	return c.JSON(http.StatusOK, newData)
 }
