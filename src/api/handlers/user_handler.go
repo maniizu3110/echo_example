@@ -17,6 +17,7 @@ func UserHandler(g *echo.Group) {
 	g.GET("", getAll)
 	g.GET("/:id", get)
 	g.PUT("/:id", update)
+	g.DELETE("/:id", delete)
 }
 
 func createHandler(c echo.Context) (err error) {
@@ -76,4 +77,13 @@ func update(c echo.Context) (err error) {
 	db.Save(&originData)
 
 	return c.JSON(http.StatusOK, newData)
+}
+
+func delete(c echo.Context) (err error) {
+	db := db.InitDB()
+	data := &models.User{}
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	db.Where("id = ?", id).First(data)
+	db.Delete(&data)
+	return c.JSON(http.StatusOK,data)
 }
