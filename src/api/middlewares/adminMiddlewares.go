@@ -21,6 +21,7 @@ func CheckAdminMiddlewares(g *echo.Group){
 	g.Use(checkToken)
 }
 
+
 func checkToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cookie, err := c.Cookie("auth")
