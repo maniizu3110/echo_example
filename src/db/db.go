@@ -37,9 +37,9 @@ func InitDB() *gorm.DB {
 
 func getConfig() config {
 	var config config
+	//本番環境で環境変数を変える
 	_, err := toml.DecodeFile("config.local.toml", &config)
 	if err != nil {
-		fmt.Println(err)
 		panic("unloaded config file")
 	}
 	return config
