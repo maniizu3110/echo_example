@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/jinzhu/gorm"
@@ -45,6 +46,13 @@ func getConfig() config {
 	return config
 }
 func (d dbConfig) DSN() string {
+	    if os.Getenv("DB_ENV") == "production" {
+        d.User = os.Getenv("DB_USER")
+        d.Password = os.Getenv("DB_PASS")
+		d.Server = os.Getenv("DB_ADDRESS")
+		//TODO:間違っている可能性あるので確認
+		return fmt.Sprintf(d.User+":"+d.Password+"@tcp("+d.Server+":3306)/"+d.Database)
+    }
 	return fmt.Sprintf("%s:%s@%s/%s?charset=%s&parseTime=%s", d.User, d.Password, d.Server, d.Database, d.Charset, d.ParseTime)
 }
 
