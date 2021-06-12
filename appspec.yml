@@ -1,0 +1,6 @@
+version: 0.0
+os: linux
+files:
+  - source: /src
+    destination: /app
+    # 本番環境と開発環境を分けるために一度 go run　でバイナリを作成してからそれを使う設定にしたい
