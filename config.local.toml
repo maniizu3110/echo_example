@@ -1,8 +1,0 @@
-[Database]
-driver = "mysql"
-server = ""
-user = "root"
-password = "625000"
-database = "echo_example"
-charset = "utf8"
-parseTime = "true"
