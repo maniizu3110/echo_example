@@ -1,6 +1,17 @@
 version: 0.0
 os: linux
 files:
-  - source: /src
+  - source: .
     destination: /app
+# hooks:
+#   BeforeInstall:
+#     - location: codedeploy/BeforeInstall.sh
+#   AfterInstall:
+#     - location: codedeploy/AfterInstall.sh
+#   ApplicationStop:
+#     - location: codedeploy/ApplicationStop.sh
+#   ApplicationStart:
+#     - location: codedeploy/ApplicationStart.sh
+#   ValidateService:
+#     - location: codedeploy/ValidateService.sh 
     # 本番環境と開発環境を分けるために一度 go run　でバイナリを作成してからそれを使う設定にしたい
