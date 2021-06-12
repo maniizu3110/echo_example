@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/jinzhu/gorm"
@@ -16,12 +15,10 @@ type config struct {
 
 type dbConfig struct {
 	Driver    string
-	Server    string
 	User      string
 	Password  string
-	Database  string
-	Charset   string
-	ParseTime string
+	Address   string
+	DBName	  string
 }
 
 //InitDB start MysqlDB
@@ -30,6 +27,7 @@ func InitDB() *gorm.DB {
 	config := getConfig()
 	db, err = gorm.Open(config.Db())
 	if err != nil {
+		fmt.Println(err)
 		panic("failed to connect database.")
 	}
 	db.LogMode(true)
@@ -38,25 +36,18 @@ func InitDB() *gorm.DB {
 
 func getConfig() config {
 	var config config
-	//本番環境で環境変数を変える
 	_, err := toml.DecodeFile("config.local.toml", &config)
 	if err != nil {
+		fmt.Println(err)
 		panic("unloaded config file")
 	}
 	return config
 }
-func (d dbConfig) DSN() string {
-	if os.Getenv("DB_ENV") == "production" {
-		d.User = os.Getenv("DB_USER")
-        d.Password = os.Getenv("DB_PASS")
-		d.Server = os.Getenv("DB_ADDRESS")
-		d.Database = os.Getenv("DB_DATABASE")
-		return fmt.Sprintf("%s:%s@%s/%s?charset=%s&parseTime=%s",d.User, d.Password, d.Server, d.Database, d.Charset, d.ParseTime)
-	} else {
-		return fmt.Sprintf("%s:%s@%s/%s?charset=%s&parseTime=%s", d.User, d.Password, d.Server, d.Database, d.Charset, d.ParseTime)
-	}
-}
+// func (d dbConfig) DSN() string {
+// 	return fmt.Sprintf("%s:%s@%s/%s?charset=%s&parseTime=%s", d.User, d.Password, d.Server, d.Database, d.Charset, d.ParseTime)
+// }
 
 func (c config) Db() (string, string) {
-	return c.Database.Driver, c.Database.DSN()
+	SETTING := c.Database.User + ":" + c.Database.Password + "@tcp(" + c.Database.Address +":3306)/" +c.Database.DBName+ "?charset=utf8&parseTime=true&loc=Asia%2FTokyo"
+	return c.Database.Driver,SETTING
 }
