@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	
 	var database *gorm.DB
 	database = db.InitDB()
 	defer database.Close()
