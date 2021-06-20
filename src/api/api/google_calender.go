@@ -71,14 +71,12 @@ func saveToken(path string, token *oauth2.Token) {
         json.NewEncoder(f).Encode(token)
 }
 
-func GetDayCalender() {
-		ctx := context.Background()
-		fmt.Println("とりあえずここまで")
-        b, err := ioutil.ReadFile("credentials.json")
+func GetDayCalendar() {
+        ctx := context.Background()
+        b, err := ioutil.ReadFile("calender_api_credentials.json")
         if err != nil {
-			log.Fatalf("Unable to read client secret file: %v", err)
+                log.Fatalf("Unable to read client secret file: %v", err)
         }
-		fmt.Println("とりあえずここまで")
 
         // If modifying these scopes, delete your previously saved token.json.
         config, err := google.ConfigFromJSON(b, calendar.CalendarReadonlyScope)
@@ -92,12 +90,10 @@ func GetDayCalender() {
                 log.Fatalf("Unable to retrieve Calendar client: %v", err)
         }
 
-		start := time.Now()
-		end := start.AddDate(0,0,1)
-		fmt.Println(start)
-		fmt.Println(end)
+        start := time.Now().Format(time.RFC3339)
+        end := time.Now().AddDate(0,0,6).Format(time.RFC3339)
         events, err := srv.Events.List("primary").ShowDeleted(false).
-                SingleEvents(true).TimeMin(start.Format(time.RFC3339)).TimeMax(end.Format(time.RFC3339)).MaxResults(10).OrderBy("startTime").Do()
+                SingleEvents(true).TimeMin(start).TimeMax(end).MaxResults(10).OrderBy("startTime").Do()
         if err != nil {
                 log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
         }
@@ -110,7 +106,7 @@ func GetDayCalender() {
                         if date == "" {
                                 date = item.Start.Date
                         }
-                        fmt.Printf("%v (%v)\n", item.Summary, date)
+                        fmt.Printf("%+v \n", item)
                 }
         }
 }

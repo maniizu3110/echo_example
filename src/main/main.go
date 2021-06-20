@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	api.GetDayCalender()
+	api.GetDayCalendar()
 	var database *gorm.DB
 	database = db.InitDB()
 	defer database.Close()
