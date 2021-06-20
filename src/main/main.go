@@ -1,14 +1,17 @@
 package main
 
 import (
+	"myapp/src/api/api"
 	"myapp/src/db"
 	"myapp/src/router"
+
 	"github.com/jinzhu/gorm"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {
+	api.GetDayCalender()
 	var database *gorm.DB
 	database = db.InitDB()
 	defer database.Close()
