@@ -13,14 +13,14 @@ import (
 
 //UserHandler retreave /user
 func UserHandler(g *echo.Group) {
-	g.POST("", createHandler)
-	g.GET("", getAll)
-	g.GET("/:id", get)
-	g.PUT("/:id", update)
-	g.DELETE("/:id", delete)
+	g.POST("", createUserHandler)
+	g.GET("", getAllUser)
+	g.GET("/:id", getUser)
+	g.PUT("/:id", updateUser)
+	g.DELETE("/:id", deleteUser)
 }
 
-func createHandler(c echo.Context) (err error) {
+func createUserHandler(c echo.Context) (err error) {
 	//TODO:共通化（db2回呼んでいる）
 	db := db.InitDB()
 	user := new(models.User)
@@ -31,7 +31,7 @@ func createHandler(c echo.Context) (err error) {
 	return c.String(http.StatusOK, "Registed new user")
 }
 
-func getAll(c echo.Context) error {
+func getAllUser(c echo.Context) error {
 	var users []models.User
 	db := db.InitDB()
 	result := db.Find(&users)
@@ -40,7 +40,7 @@ func getAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func get(c echo.Context) (err error) {
+func getUser(c echo.Context) (err error) {
 	db := db.InitDB()
 	data := &models.User{}
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -52,7 +52,7 @@ func get(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, data)
 }
 
-func update(c echo.Context) (err error) {
+func updateUser(c echo.Context) (err error) {
 	db := db.InitDB()
 	newData := models.User{}
 	err = c.Bind(&newData)
@@ -80,7 +80,7 @@ func update(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, newData)
 }
 
-func delete(c echo.Context) (err error) {
+func deleteUser(c echo.Context) (err error) {
 	db := db.InitDB()
 	data := &models.User{}
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
