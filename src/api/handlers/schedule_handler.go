@@ -1,26 +1,22 @@
-// package handlers
+package handlers
 
-// import (
-// 	"fmt"
-// 	"myapp/src/api/models"
-// 	"myapp/src/db"
-// 	"net/http"
-// 	"strconv"
-// 	"time"
+import (
+	"myapp/src/api/models"
+	"myapp/src/db"
+	"net/http"
+	"strconv"
 
-// 	"github.com/labstack/echo/v4"
-// )
+	"github.com/labstack/echo/v4"
+)
 
-// //UserHandler retreave /user
-// func UserHandler(g *echo.Group) {
-// 	g.POST("", createHandler)
-// 	g.GET("", getAll)
-// 	g.GET("/:id", get)
-// 	g.PUT("/:id", update)
-// 	g.DELETE("/:id", delete)
-// }
+//UserHandler retreave /user
+func ScheduleHandler(g *echo.Group) {
+	g.GET("/:id", getSchedule)
+	// g.PUT("/:id", updateSchedule)
+	// g.DELETE("/:id", deleteSchedule)
+}
 
-// func createHandler(c echo.Context) (err error) {
+// func createScheduleHandler(c echo.Context) (err error) {
 // 	//TODO:共通化（db2回呼んでいる）
 // 	db := db.InitDB()
 // 	user := new(models.User)
@@ -31,7 +27,7 @@
 // 	return c.String(http.StatusOK, "Registed new user")
 // }
 
-// func getAll(c echo.Context) error {
+// func getAllSchedule(c echo.Context) error {
 // 	var users []models.User
 // 	db := db.InitDB()
 // 	result := db.Find(&users)
@@ -40,19 +36,19 @@
 // 	return c.JSON(http.StatusOK, result)
 // }
 
-// func get(c echo.Context) (err error) {
-// 	db := db.InitDB()
-// 	data := &models.User{}
-// 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	db.Where("id = ?", id).First(data)
+func getSchedule(c echo.Context) (err error) {
+	db := db.InitDB()
+	data := &models.User{}
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		return err
+	}
+	db.Where("id = ?", id).First(data)
 
-// 	return c.JSON(http.StatusOK, data)
-// }
+	return c.JSON(http.StatusOK, data)
+}
 
-// func update(c echo.Context) (err error) {
+// func updateSchedule(c echo.Context) (err error) {
 // 	db := db.InitDB()
 // 	newData := models.User{}
 // 	err = c.Bind(&newData)
@@ -80,7 +76,7 @@
 // 	return c.JSON(http.StatusOK, newData)
 // }
 
-// func delete(c echo.Context) (err error) {
+// func deleteSchedule(c echo.Context) (err error) {
 // 	db := db.InitDB()
 // 	data := &models.User{}
 // 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
