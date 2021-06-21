@@ -1,7 +1,6 @@
 package main
 
 import (
-	"myapp/src/api/api"
 	"myapp/src/db"
 	"myapp/src/router"
 
@@ -11,7 +10,6 @@ import (
 )
 
 func main() {
-	api.GetDayCalendar()
 	var database *gorm.DB
 	database = db.InitDB()
 	defer database.Close()
