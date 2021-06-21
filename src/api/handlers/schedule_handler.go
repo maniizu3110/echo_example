@@ -14,11 +14,13 @@ import (
 func ScheduleHandler(g *echo.Group) {
 	g.POST("/:id", createSchedule)
 	g.GET("/:id", getSchedule)
-	// g.PUT("/:id", updateSchedule)
+	g.PUT("/:id", updateSchedule)
 	// g.DELETE("/:id", deleteSchedule)
 }
 
 func createSchedule(c echo.Context)(err error){
+	//TODO:タイムゾーンなどデフォルトを設定
+	//TODO:フロントから受け取ったものをここで当てはめていくことで使えるデータをgoogle apiに挿入
 	srv := api.GetAPICalendar()
 	event := &calendar.Event{
 	Summary: "Google I/O 2015",
@@ -46,27 +48,6 @@ func createSchedule(c echo.Context)(err error){
 	}
 	fmt.Printf("Event created: %s\n", event.HtmlLink)
 	return c.JSON(http.StatusOK,event)
-// 	event := &calendar.Event{
-// 	Summary: "Google I/O 2015",
-// 	Location: "800 Howard St., San Francisco, CA 94103",
-// 	Description: "A chance to hear more about Google's developer products.",
-// 	Start: &calendar.EventDateTime{
-// 		DateTime: "2021-06-25T10:15:00+09:00",
-// 	},
-// 	End: &calendar.EventDateTime{
-// 		DateTime: "2021-06-25T012:15:00+09:00",
-// 	},
-// 	Recurrence: []string{"RRULE:FREQ=DAILY;COUNT=2"},
-// 	Attendees: []*calendar.EventAttendee{
-// 	},
-// }
-// 	calendarId := "primary"
-// 	event, err = srv.Events.Insert(calendarId, event).Do()
-// 	if err != nil {
-// 	log.Fatalf("Unable to create event. %v\n", err)
-// 	}
-// 	fmt.Printf("Event created: %s\n", event.HtmlLink)
-// 	return c.JSON(http.StatusOK, event)
 }
 			
 //UserHandler は日付を指定してやればその日付のstartとendを自動的に計算してその日の予定を返す
@@ -99,33 +80,18 @@ func getSchedule(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, data)
 }
 
-// func updateSchedule(c echo.Context) (err error) {
-// 	db := db.InitDB()
-// 	newData := models.User{}
-// 	err = c.Bind(&newData)
-// 	originData := &models.User{}
-// 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
-// 	db.Where("id = ?", id).First(originData)
-// 	fmt.Println("このログ出力したい", newData.ID)
-// 	if newData.ID != 0 && newData.ID != originData.ID {
-// 		return c.JSON(http.StatusConflict, "urlに含まれるIDと編集データIDが一致していません")
-// 	}
-// 	if (newData.CreatedAt != time.Time{}) && (newData.CreatedAt != originData.CreatedAt) {
-// 		return c.JSON(http.StatusConflict, "作成時間の編集はできません")
-// 	}
-// 	if (newData.UpdatedAt != time.Time{}) && (newData.UpdatedAt != originData.UpdatedAt) {
-// 		return c.JSON(http.StatusConflict, "更新時間の編集はできません")
-// 	}
-// 	if newData.Name != originData.Name {
-// 		originData.Name = newData.Name
-// 	}
-// 	if newData.Email != originData.Email {
-// 		originData.Email = newData.Email
-// 	}
-// 	db.Save(&originData)
+func updateSchedule(c echo.Context) (err error) {
+	//jsonでフロントから構造をそのまま受け取ってeventにbindする
+	event := new(calendar.Event)
+	 if err = c.Bind(event); err != nil {
+      return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	fmt.Println(event)
 
-// 	return c.JSON(http.StatusOK, newData)
-// }
+	//保存処理
+
+	return c.JSON(http.StatusOK, event)
+}
 
 // func deleteSchedule(c echo.Context) (err error) {
 // 	db := db.InitDB()
