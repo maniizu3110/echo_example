@@ -25,24 +25,48 @@ func createSchedule(c echo.Context)(err error){
 	Location: "800 Howard St., San Francisco, CA 94103",
 	Description: "A chance to hear more about Google's developer products.",
 	Start: &calendar.EventDateTime{
-		DateTime: "2021-06-25T10:15:00+09:00",
+		DateTime: "2015-05-28T09:00:00-07:00",
 		TimeZone: "America/Los_Angeles",
 	},
 	End: &calendar.EventDateTime{
-		DateTime: "2021-06-25T012:15:00+09:00",
+		DateTime: "2015-05-28T17:00:00-07:00",
 		TimeZone: "America/Los_Angeles",
 	},
 	Recurrence: []string{"RRULE:FREQ=DAILY;COUNT=2"},
 	Attendees: []*calendar.EventAttendee{
+		&calendar.EventAttendee{Email:"lpage@example.com"},
+		&calendar.EventAttendee{Email:"sbrin@example.com"},
 	},
-}
+	}
+
 	calendarId := "primary"
 	event, err = srv.Events.Insert(calendarId, event).Do()
 	if err != nil {
 	log.Fatalf("Unable to create event. %v\n", err)
 	}
 	fmt.Printf("Event created: %s\n", event.HtmlLink)
-	return c.JSON(http.StatusOK, event)
+	return c.JSON(http.StatusOK,event)
+// 	event := &calendar.Event{
+// 	Summary: "Google I/O 2015",
+// 	Location: "800 Howard St., San Francisco, CA 94103",
+// 	Description: "A chance to hear more about Google's developer products.",
+// 	Start: &calendar.EventDateTime{
+// 		DateTime: "2021-06-25T10:15:00+09:00",
+// 	},
+// 	End: &calendar.EventDateTime{
+// 		DateTime: "2021-06-25T012:15:00+09:00",
+// 	},
+// 	Recurrence: []string{"RRULE:FREQ=DAILY;COUNT=2"},
+// 	Attendees: []*calendar.EventAttendee{
+// 	},
+// }
+// 	calendarId := "primary"
+// 	event, err = srv.Events.Insert(calendarId, event).Do()
+// 	if err != nil {
+// 	log.Fatalf("Unable to create event. %v\n", err)
+// 	}
+// 	fmt.Printf("Event created: %s\n", event.HtmlLink)
+// 	return c.JSON(http.StatusOK, event)
 }
 			
 //UserHandler は日付を指定してやればその日付のstartとendを自動的に計算してその日の予定を返す
