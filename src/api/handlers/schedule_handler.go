@@ -83,10 +83,11 @@ func getSchedule(c echo.Context) (err error) {
 func updateSchedule(c echo.Context) (err error) {
 	//jsonでフロントから構造をそのまま受け取ってeventにbindする
 	event := new(calendar.Event)
-	 if err = c.Bind(event); err != nil {
-      return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	if err = c.Bind(&event); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	fmt.Println(event)
+	fmt.Printf("bind後のevent:%+v",event)
+
 
 	//保存処理
 
