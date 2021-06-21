@@ -58,39 +58,36 @@ func getSchedule(c echo.Context) (err error) {
 		start := time.Now().Format(time.RFC3339)
         end := time.Now().AddDate(0,0,6).Format(time.RFC3339)
         events, err := srv.Events.List("primary").ShowDeleted(false).
-                SingleEvents(true).TimeMin(start).TimeMax(end).MaxResults(10).OrderBy("startTime").Do()
+		SingleEvents(true).TimeMin(start).TimeMax(end).MaxResults(10).OrderBy("startTime").Do()
         if err != nil {
-                log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
+			log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
         }
-        fmt.Println("Upcoming events:")
         if len(events.Items) == 0 {
-                fmt.Println("No upcoming events found.")
-        } else {
-                for _, item := range events.Items {
-                        date := item.Start.DateTime
-                        if date == "" {
-                                date = item.Start.Date
-                        }
-                        fmt.Printf("%+v \n", item.Summary)
+			} else {
+				for _, item := range events.Items {
+					date := item.Start.DateTime
+					if date == "" {
+						date = item.Start.Date
+					}
+					fmt.Printf("%+v \n", item.Summary)
                 }
+			}
+			data := events.Items
+			
+			
+			return c.JSON(http.StatusOK, data)
 		}
-	data := events.Items
-
-
-	return c.JSON(http.StatusOK, data)
-}
-
+		
 func updateSchedule(c echo.Context) (err error) {
+	srv := api.GetAPICalendar()
 	//jsonでフロントから構造をそのまま受け取ってeventにbindする
 	event := new(calendar.Event)
 	if err = c.Bind(&event); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	fmt.Printf("bind後のevent:%+v",event)
-
-
-	//保存処理
-
+	//TODO:フロントから指定可能にする
+	calendarId := "primary"
+	event, err = srv.Events.Update(calendarId,event.Id,event).Do()
 	return c.JSON(http.StatusOK, event)
 }
 
