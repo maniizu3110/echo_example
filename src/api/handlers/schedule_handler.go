@@ -8,33 +8,42 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"google.golang.org/api/calendar/v3"
 )
 
 func ScheduleHandler(g *echo.Group) {
+	g.POST("/:id", createSchedule)
 	g.GET("/:id", getSchedule)
 	// g.PUT("/:id", updateSchedule)
 	// g.DELETE("/:id", deleteSchedule)
 }
 
-// func createScheduleHandler(c echo.Context) (err error) {
-	// 	//TODO:共通化（db2回呼んでいる）
-	// 	db := db.InitDB()
-	// 	user := new(models.User)
-	// 	if err := c.Bind(user); err != nil {
-		// 		return err
-		// 	}
-		// 	db.Create(&user)
-		// 	return c.String(http.StatusOK, "Registed new user")
-		// }
-		
-		// func getAllSchedule(c echo.Context) error {
-			// 	var users []models.User
-			// 	db := db.InitDB()
-			// 	result := db.Find(&users)
-			// 	fmt.Println(result)
-			
-			// 	return c.JSON(http.StatusOK, result)
-			// }
+func createSchedule(c echo.Context)(err error){
+	srv := api.GetAPICalendar()
+	event := &calendar.Event{
+	Summary: "Google I/O 2015",
+	Location: "800 Howard St., San Francisco, CA 94103",
+	Description: "A chance to hear more about Google's developer products.",
+	Start: &calendar.EventDateTime{
+		DateTime: "2021-06-25T10:15:00+09:00",
+		TimeZone: "America/Los_Angeles",
+	},
+	End: &calendar.EventDateTime{
+		DateTime: "2021-06-25T012:15:00+09:00",
+		TimeZone: "America/Los_Angeles",
+	},
+	Recurrence: []string{"RRULE:FREQ=DAILY;COUNT=2"},
+	Attendees: []*calendar.EventAttendee{
+	},
+}
+	calendarId := "primary"
+	event, err = srv.Events.Insert(calendarId, event).Do()
+	if err != nil {
+	log.Fatalf("Unable to create event. %v\n", err)
+	}
+	fmt.Printf("Event created: %s\n", event.HtmlLink)
+	return c.JSON(http.StatusOK, event)
+}
 			
 //UserHandler は日付を指定してやればその日付のstartとendを自動的に計算してその日の予定を返す
 func getSchedule(c echo.Context) (err error) {
