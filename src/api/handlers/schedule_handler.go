@@ -15,7 +15,7 @@ func ScheduleHandler(g *echo.Group) {
 	g.POST("/:id", createSchedule)
 	g.GET("/:id", getSchedule)
 	g.PUT("/:id", updateSchedule)
-	// g.DELETE("/:id", deleteSchedule)
+	g.DELETE("/:id", deleteSchedule)
 }
 
 func createSchedule(c echo.Context)(err error){
@@ -27,11 +27,11 @@ func createSchedule(c echo.Context)(err error){
 	Location: "800 Howard St., San Francisco, CA 94103",
 	Description: "A chance to hear more about Google's developer products.",
 	Start: &calendar.EventDateTime{
-		DateTime: "2015-05-28T09:00:00-07:00",
+		DateTime: "2021-06-28T09:00:00-07:00",
 		TimeZone: "America/Los_Angeles",
 	},
 	End: &calendar.EventDateTime{
-		DateTime: "2015-05-28T17:00:00-07:00",
+		DateTime: "2021-06-28T17:00:00-07:00",
 		TimeZone: "America/Los_Angeles",
 	},
 	Recurrence: []string{"RRULE:FREQ=DAILY;COUNT=2"},
@@ -62,40 +62,35 @@ func getSchedule(c echo.Context) (err error) {
         if err != nil {
 			log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
         }
-        if len(events.Items) == 0 {
-			} else {
-				for _, item := range events.Items {
-					date := item.Start.DateTime
-					if date == "" {
-						date = item.Start.Date
-					}
-					fmt.Printf("%+v \n", item.Summary)
-                }
-			}
-			data := events.Items
-			
-			
-			return c.JSON(http.StatusOK, data)
+		data := events.Items
+		return c.JSON(http.StatusOK, data)
 		}
 		
 func updateSchedule(c echo.Context) (err error) {
 	srv := api.GetAPICalendar()
-	//jsonでフロントから構造をそのまま受け取ってeventにbindする
 	event := new(calendar.Event)
 	if err = c.Bind(&event); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	//TODO:フロントから指定可能にする
-	calendarId := "primary"
-	event, err = srv.Events.Update(calendarId,event.Id,event).Do()
+	//googleapi: Error 400: Cannot specify both default reminders and overrides at the same time., cannotUseDefaultRemindersAndSpecifyOverride
+	event.Reminders.UseDefault = false
+	event, err = srv.Events.Update("primary",event.Id,event).Do()
+	if err!=nil{
+		fmt.Println(err)
+		return echo.NewHTTPError(http.StatusNotImplemented,err.Error())
+	}
 	return c.JSON(http.StatusOK, event)
 }
 
-// func deleteSchedule(c echo.Context) (err error) {
-// 	db := db.InitDB()
-// 	data := &models.User{}
-// 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
-// 	db.Where("id = ?", id).First(data)
-// 	db.Delete(&data)
-// 	return c.JSON(http.StatusOK,data)
-// }
+func deleteSchedule(c echo.Context) (err error) {
+	type Error struct{
+		message string
+	}
+	eventID := c.QueryParam("id")
+	srv := api.GetAPICalendar()
+	err = srv.Events.Delete("primary",eventID).Do()
+	if err != nil{
+		return echo.NewHTTPError(http.StatusNotImplemented,err.Error())
+	}
+	return c.JSON(http.StatusOK,&Error{message:"スケジュールの削除に成功しました"})
+}
