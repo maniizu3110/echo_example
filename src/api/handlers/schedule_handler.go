@@ -73,7 +73,8 @@ func updateSchedule(c echo.Context) (err error) {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	//googleapi: Error 400: Cannot specify both default reminders and overrides at the same time., cannotUseDefaultRemindersAndSpecifyOverride
-	event.Reminders.UseDefault = false
+	//上記エラーを避けるための処理だが、本当に問題ないか吟味が必要
+	event.Reminders.Overrides = nil
 	event, err = srv.Events.Update("primary",event.Id,event).Do()
 	if err!=nil{
 		fmt.Println(err)
