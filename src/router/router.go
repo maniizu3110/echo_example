@@ -18,6 +18,7 @@ func Router(database *gorm.DB) *echo.Echo {
 
 
 	handlers.UserHandler(g.Group("/user"))
+	handlers.ScheduleHandler(g.Group("/schedule"))
 
 	return e
 }
