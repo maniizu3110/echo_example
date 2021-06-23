@@ -16,8 +16,21 @@ func UserHandler(g *echo.Group) {
 	g.POST("", createUserHandler)
 	g.GET("", getAllUser)
 	g.GET("/:id", getUser)
+	g.GET("/login", login)
 	g.PUT("/:id", updateUser)
 	g.DELETE("/:id", deleteUser)
+}
+
+func login(c echo.Context)(err error){
+	db := db.InitDB()
+	name := c.QueryParam("name")
+	email := c.QueryParam("email")
+	user := &models.User{}
+	result := db.Where("name = ?", name).Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return c.JSON(http.StatusForbidden,"ユーザ名とメールアドレスに対応するユーザーが見つかりませんでした")
+	}
+	return c.JSON(http.StatusOK, user)
 }
 
 func createUserHandler(c echo.Context) (err error) {
@@ -28,7 +41,7 @@ func createUserHandler(c echo.Context) (err error) {
 		return err
 	}
 	db.Create(&user)
-	return c.String(http.StatusOK, "Registed new user")
+	return c.JSON(http.StatusOK, user)
 }
 
 func getAllUser(c echo.Context) error {
