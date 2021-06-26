@@ -81,6 +81,7 @@ func GetAPICalendar() *calendar.Service{
         if err != nil {
                 log.Fatalf("Unable to parse client secret file to config: %v", err)
         }
+        //ここtoken.jsを作成するのではなく、HTTPを通してデータのやりとりをすれば、同じように動くはず
         client := getClient(config)
 
         srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
